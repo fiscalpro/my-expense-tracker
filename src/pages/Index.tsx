@@ -4,6 +4,7 @@ import { DespesaCard } from "@/components/DespesaCard";
 import { DespesaFilters, DespesaFiltersData } from "@/components/DespesaFilters";
 import { DespesaPagination } from "@/components/DespesaPagination";
 import { NovaDespesaDialog } from "@/components/NovaDespesaDialog";
+import { VisualizarDespesaDialog } from "@/components/VisualizarDespesaDialog";
 import { DespesaResponse } from "@/types/despesa";
 import { Wallet, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -49,6 +50,7 @@ const fetchDespesas = async (
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 11;
+  const [selectedDespesaId, setSelectedDespesaId] = useState<string | null>(null);
   const [filters, setFilters] = useState<DespesaFiltersData>({
     nomeOrigem: "",
     nomePagador: "",
@@ -115,7 +117,11 @@ const Index = () => {
           <>
             <div className="space-y-4">
               {data.content.map((despesa) => (
-                <DespesaCard key={despesa.id} despesa={despesa} />
+                <DespesaCard 
+                  key={despesa.id} 
+                  despesa={despesa}
+                  onClick={() => setSelectedDespesaId(despesa.id)}
+                />
               ))}
             </div>
 
@@ -134,6 +140,15 @@ const Index = () => {
               />
             )}
           </>
+        )}
+
+        {/* Visualizar/Editar Despesa Dialog */}
+        {selectedDespesaId && (
+          <VisualizarDespesaDialog
+            despesaId={selectedDespesaId}
+            open={!!selectedDespesaId}
+            onOpenChange={(open) => !open && setSelectedDespesaId(null)}
+          />
         )}
       </div>
     </div>
