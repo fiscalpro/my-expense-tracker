@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -134,7 +135,9 @@ export default function Origens() {
                 <CardTitle>{origem.nome}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">ID: {origem.id}</p>
+                <Badge variant="secondary">
+                  {tiposOrigem.find(t => t.value === origem.tipoOrigem)?.label || origem.tipoOrigem}
+                </Badge>
               </CardContent>
             </Card>
           ))}

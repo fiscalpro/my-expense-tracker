@@ -1,6 +1,7 @@
 export interface Origem {
   id: string;
   nome: string;
+  tipoOrigem: string;
 }
 
 export interface OrigemResponse {
