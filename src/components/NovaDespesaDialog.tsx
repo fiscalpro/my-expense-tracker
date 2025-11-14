@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { PagadorSearch } from "@/components/PagadorSearch";
 import { OrigemSearch } from "@/components/OrigemSearch";
@@ -38,6 +39,7 @@ interface NovaDespesaForm {
 
 export function NovaDespesaDialog() {
   const [open, setOpen] = useState(false);
+  const [incluirParcela, setIncluirParcela] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -56,15 +58,9 @@ export function NovaDespesaDialog() {
 
   const mutation = useMutation({
     mutationFn: async (data: NovaDespesaForm) => {
-      // Só envia parcelaForm se algum campo foi realmente preenchido
-      const hasParcelaData = 
-        data.parcelaForm.tipoParcela !== "COMPRA" || 
-        data.parcelaForm.total !== 1 || 
-        data.parcelaForm.numeroOriginal !== 1;
-
       const payload = {
         ...data,
-        parcelaForm: hasParcelaData ? data.parcelaForm : undefined,
+        parcelaForm: incluirParcela ? data.parcelaForm : undefined,
       };
 
       const response = await fetch("http://localhost:8080/despesas", {
@@ -86,6 +82,7 @@ export function NovaDespesaDialog() {
         description: "A despesa foi adicionada com sucesso.",
       });
       setOpen(false);
+      setIncluirParcela(false);
       setFormData({
         descricao: "",
         valor: 0,
@@ -170,66 +167,81 @@ export function NovaDespesaDialog() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="tipoParcela">Tipo de Parcela</Label>
-            <Select
-              value={formData.parcelaForm.tipoParcela}
-              onValueChange={(value) =>
-                setFormData({
-                  ...formData,
-                  parcelaForm: { ...formData.parcelaForm, tipoParcela: value },
-                })
-              }
-            >
-              <SelectTrigger id="tipoParcela">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="COMPRA">Compra</SelectItem>
-                <SelectItem value="PARCELADO">Parcelado</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="incluirParcela"
+              checked={incluirParcela}
+              onCheckedChange={(checked) => setIncluirParcela(checked as boolean)}
+            />
+            <Label htmlFor="incluirParcela" className="cursor-pointer">
+              Incluir informações de parcela
+            </Label>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="total">Total de Parcelas</Label>
-              <Input
-                id="total"
-                type="number"
-                min="1"
-                value={formData.parcelaForm.total}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    parcelaForm: {
-                      ...formData.parcelaForm,
-                      total: parseInt(e.target.value),
-                    },
-                  })
-                }
-              />
-            </div>
+          {incluirParcela && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="tipoParcela">Tipo de Parcela</Label>
+                <Select
+                  value={formData.parcelaForm.tipoParcela}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      parcelaForm: { ...formData.parcelaForm, tipoParcela: value },
+                    })
+                  }
+                >
+                  <SelectTrigger id="tipoParcela">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="COMPRA">Compra</SelectItem>
+                    <SelectItem value="PARCELADO">Parcelado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="numeroOriginal">Número Original</Label>
-              <Input
-                id="numeroOriginal"
-                type="number"
-                min="1"
-                value={formData.parcelaForm.numeroOriginal}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    parcelaForm: {
-                      ...formData.parcelaForm,
-                      numeroOriginal: parseInt(e.target.value),
-                    },
-                  })
-                }
-              />
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="total">Total de Parcelas</Label>
+                  <Input
+                    id="total"
+                    type="number"
+                    min="1"
+                    value={formData.parcelaForm.total}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        parcelaForm: {
+                          ...formData.parcelaForm,
+                          total: parseInt(e.target.value),
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="numeroOriginal">Número Original</Label>
+                  <Input
+                    id="numeroOriginal"
+                    type="number"
+                    min="1"
+                    value={formData.parcelaForm.numeroOriginal}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        parcelaForm: {
+                          ...formData.parcelaForm,
+                          numeroOriginal: parseInt(e.target.value),
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <OrigemSearch
             value={formData.origemId}
