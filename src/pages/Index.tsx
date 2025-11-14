@@ -49,7 +49,7 @@ const fetchDespesas = async (
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 11;
+  const pageSize = 20;
   const [selectedDespesaId, setSelectedDespesaId] = useState<string | null>(null);
   const [filters, setFilters] = useState<DespesaFiltersData>({
     nomeOrigem: "",
