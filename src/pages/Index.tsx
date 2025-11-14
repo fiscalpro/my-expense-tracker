@@ -34,6 +34,10 @@ const fetchDespesas = async (
   if (filters.dataCompetenciaFim) {
     params.append('dataCompetenciaFim', format(filters.dataCompetenciaFim, 'yyyy-MM-dd'));
   }
+  
+  // Adiciona ordenação
+  const sortField = filters.ordenacao === "data" ? "data" : "valor";
+  params.append('sort', `${sortField},desc`);
 
   const response = await fetch(`http://localhost:8080/despesas?${params.toString()}`);
   if (!response.ok) {
@@ -52,6 +56,7 @@ const Index = () => {
     dataCompetencia: undefined,
     dataCompetenciaInicio: undefined,
     dataCompetenciaFim: undefined,
+    ordenacao: "data",
   });
 
   const { data, isLoading, error } = useQuery({
