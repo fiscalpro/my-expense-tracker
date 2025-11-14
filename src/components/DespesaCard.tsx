@@ -6,11 +6,12 @@ import { Calendar, CreditCard, Tag, Layers } from "lucide-react";
 
 interface DespesaCardProps {
   despesa: Despesa;
+  onClick?: () => void;
 }
 
-export const DespesaCard = ({ despesa }: DespesaCardProps) => {
+export const DespesaCard = ({ despesa, onClick }: DespesaCardProps) => {
   return (
-    <Card className="hover:shadow-sm transition-shadow">
+    <Card className="hover:shadow-sm transition-shadow cursor-pointer" onClick={onClick}>
       <CardContent className="p-3">
         <div className="flex items-center gap-4">
           {/* Descrição - flex 1 para ocupar espaço disponível */}
