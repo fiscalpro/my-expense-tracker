@@ -1,16 +1,41 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DespesaCard } from "@/components/DespesaCard";
-import { DespesaFilters } from "@/components/DespesaFilters";
+import { DespesaFilters, DespesaFiltersData } from "@/components/DespesaFilters";
 import { DespesaPagination } from "@/components/DespesaPagination";
 import { NovaDespesaDialog } from "@/components/NovaDespesaDialog";
 import { DespesaResponse } from "@/types/despesa";
 import { Wallet, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
-const fetchDespesas = async (page: number, size: number): Promise<DespesaResponse> => {
-  const response = await fetch(`http://localhost:8080/despesas?page=${page}&size=${size}`);
+const fetchDespesas = async (
+  page: number, 
+  size: number, 
+  filters: DespesaFiltersData
+): Promise<DespesaResponse> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+  });
+
+  if (filters.nomeOrigem) params.append('nomeOrigem', filters.nomeOrigem);
+  if (filters.nomePagador) params.append('nomePagador', filters.nomePagador);
+  if (filters.statusDespesaEnum && filters.statusDespesaEnum !== 'all') {
+    params.append('statusDespesaEnum', filters.statusDespesaEnum);
+  }
+  if (filters.dataCompetencia) {
+    params.append('dataCompetencia', format(filters.dataCompetencia, 'yyyy-MM-dd'));
+  }
+  if (filters.dataCompetenciaInicio) {
+    params.append('dataCompetenciaInicio', format(filters.dataCompetenciaInicio, 'yyyy-MM-dd'));
+  }
+  if (filters.dataCompetenciaFim) {
+    params.append('dataCompetenciaFim', format(filters.dataCompetenciaFim, 'yyyy-MM-dd'));
+  }
+
+  const response = await fetch(`http://localhost:8080/despesas?${params.toString()}`);
   if (!response.ok) {
     throw new Error('Falha ao carregar despesas');
   }
@@ -20,11 +45,24 @@ const fetchDespesas = async (page: number, size: number): Promise<DespesaRespons
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 11;
+  const [filters, setFilters] = useState<DespesaFiltersData>({
+    nomeOrigem: "",
+    nomePagador: "",
+    statusDespesaEnum: "",
+    dataCompetencia: undefined,
+    dataCompetenciaInicio: undefined,
+    dataCompetenciaFim: undefined,
+  });
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['despesas', currentPage, pageSize],
-    queryFn: () => fetchDespesas(currentPage, pageSize),
+    queryKey: ['despesas', currentPage, pageSize, filters],
+    queryFn: () => fetchDespesas(currentPage, pageSize, filters),
   });
+
+  const handleFiltersChange = (newFilters: DespesaFiltersData) => {
+    setFilters(newFilters);
+    setCurrentPage(0); // Reset to first page when filters change
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,7 +84,7 @@ const Index = () => {
         </div>
 
         {/* Filters */}
-        <DespesaFilters />
+        <DespesaFilters filters={filters} onFiltersChange={handleFiltersChange} />
 
         {/* Error State */}
         {error && (
