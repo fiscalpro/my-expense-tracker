@@ -1,4 +1,4 @@
-import { Receipt } from "lucide-react";
+import { Receipt, Tags, CreditCard } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -13,6 +13,8 @@ import {
 
 const menuItems = [
   { title: "Despesas", url: "/", icon: Receipt },
+  { title: "Origens", url: "/origens", icon: Tags },
+  { title: "Pagadores", url: "/pagadores", icon: CreditCard },
 ];
 
 export function AppSidebar() {
