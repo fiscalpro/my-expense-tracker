@@ -7,6 +7,8 @@ export interface Despesa {
   origem: string;
   pagador: string;
   competencia: string;
+  numeroParcela: number | null;
+  totalParcela: number | null;
 }
 
 export interface DespesaResponse {
