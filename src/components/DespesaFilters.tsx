@@ -108,34 +108,57 @@ export const DespesaFilters = ({ filters, onFiltersChange }: DespesaFiltersProps
 
           {/* Data Competência */}
           <div className="space-y-2">
-            <Label>Data Competência</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !filters.dataCompetencia && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.dataCompetencia ? (
-                    format(filters.dataCompetencia, "PPP", { locale: ptBR })
-                  ) : (
-                    <span>Selecione a data</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={filters.dataCompetencia}
-                  onSelect={(date) => onFiltersChange({ ...filters, dataCompetencia: date })}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
+            <Label>Competência (Mês/Ano)</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Select
+                value={filters.dataCompetencia ? format(filters.dataCompetencia, "M") : ""}
+                onValueChange={(month) => {
+                  const year = filters.dataCompetencia ? filters.dataCompetencia.getFullYear() : new Date().getFullYear();
+                  const newDate = new Date(year, parseInt(month) - 1, 1);
+                  onFiltersChange({ ...filters, dataCompetencia: newDate });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Mês" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Janeiro</SelectItem>
+                  <SelectItem value="2">Fevereiro</SelectItem>
+                  <SelectItem value="3">Março</SelectItem>
+                  <SelectItem value="4">Abril</SelectItem>
+                  <SelectItem value="5">Maio</SelectItem>
+                  <SelectItem value="6">Junho</SelectItem>
+                  <SelectItem value="7">Julho</SelectItem>
+                  <SelectItem value="8">Agosto</SelectItem>
+                  <SelectItem value="9">Setembro</SelectItem>
+                  <SelectItem value="10">Outubro</SelectItem>
+                  <SelectItem value="11">Novembro</SelectItem>
+                  <SelectItem value="12">Dezembro</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={filters.dataCompetencia ? filters.dataCompetencia.getFullYear().toString() : ""}
+                onValueChange={(year) => {
+                  const month = filters.dataCompetencia ? filters.dataCompetencia.getMonth() : new Date().getMonth();
+                  const newDate = new Date(parseInt(year), month, 1);
+                  onFiltersChange({ ...filters, dataCompetencia: newDate });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Ano" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 10 }, (_, i) => {
+                    const year = new Date().getFullYear() - 5 + i;
+                    return (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Data Competência Início */}
