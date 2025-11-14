@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -179,8 +180,16 @@ export default function Pagadores() {
               <CardHeader>
                 <CardTitle>{pagador.nome}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">ID: {pagador.id}</p>
+              <CardContent className="space-y-2">
+                <Badge variant="secondary">
+                  {tiposPagamento.find(t => t.value === pagador.tipoPagamentoEnum)?.label || pagador.tipoPagamentoEnum}
+                </Badge>
+                {(pagador.diaFatura || pagador.diaFechamento) && (
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    {pagador.diaFatura && <p>Fatura: Dia {pagador.diaFatura}</p>}
+                    {pagador.diaFechamento && <p>Fechamento: Dia {pagador.diaFechamento}</p>}
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

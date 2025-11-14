@@ -12,35 +12,34 @@ interface DespesaCardProps {
 export const DespesaCard = ({ despesa, onClick }: DespesaCardProps) => {
   return (
     <Card className="hover:shadow-sm transition-shadow cursor-pointer" onClick={onClick}>
-      <CardContent className="p-3">
+      <CardContent className="p-4">
         <div className="flex items-center gap-4">
-          {/* Descrição - flex 1 para ocupar espaço disponível */}
-          <div className="flex-1 min-w-0">
+          {/* Descrição e Origem */}
+          <div className="flex-1 min-w-0 space-y-1">
             <h3 className="font-medium text-foreground truncate">
               {despesa.descricao}
             </h3>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Tag className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{despesa.origem}</span>
+            </div>
           </div>
 
           {/* Data */}
-          <div className="hidden sm:flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="hidden sm:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[90px]">
             <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="whitespace-nowrap">{formatDate(despesa.data)}</span>
           </div>
 
           {/* Pagador */}
-          <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground">
+          <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[100px]">
             <CreditCard className="h-3.5 w-3.5 flex-shrink-0" />
-            <span className="whitespace-nowrap">{despesa.pagador}</span>
-          </div>
-
-          {/* Competência */}
-          <div className="hidden lg:block text-sm text-muted-foreground">
-            <span className="whitespace-nowrap">{formatCompetencia(despesa.competencia)}</span>
+            <span className="whitespace-nowrap truncate">{despesa.pagador}</span>
           </div>
 
           {/* Parcela */}
           {despesa.numeroParcela !== null && despesa.totalParcela !== null && (
-            <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground">
+            <div className="hidden lg:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[60px]">
               <Layers className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="whitespace-nowrap">{despesa.numeroParcela}/{despesa.totalParcela}</span>
             </div>
@@ -49,12 +48,12 @@ export const DespesaCard = ({ despesa, onClick }: DespesaCardProps) => {
           {/* Status */}
           <Badge 
             variant={despesa.status === "PAGO" ? "default" : "secondary"}
-            className={`whitespace-nowrap ${despesa.status === "NAO_PAGO" ? "bg-warning text-warning-foreground" : ""}`}
+            className={`whitespace-nowrap min-w-[80px] justify-center ${despesa.status === "NAO_PAGO" ? "bg-warning text-warning-foreground" : ""}`}
           >
             {despesa.status === "NAO_PAGO" ? "Não Pago" : "Pago"}
           </Badge>
 
-          {/* Valor - sempre visível */}
+          {/* Valor */}
           <div className="text-right min-w-[100px]">
             <p className="text-lg font-bold text-foreground whitespace-nowrap">
               {formatCurrency(despesa.valor)}
