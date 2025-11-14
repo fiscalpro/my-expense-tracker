@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Despesa } from "@/types/despesa";
 import { formatCurrency, formatDate, formatCompetencia } from "@/utils/formatters";
-import { Calendar, CreditCard, Tag } from "lucide-react";
+import { Calendar, CreditCard, Tag, Layers } from "lucide-react";
 
 interface DespesaCardProps {
   despesa: Despesa;
@@ -36,6 +36,14 @@ export const DespesaCard = ({ despesa }: DespesaCardProps) => {
           <div className="hidden lg:block text-sm text-muted-foreground">
             <span className="whitespace-nowrap">{formatCompetencia(despesa.competencia)}</span>
           </div>
+
+          {/* Parcela */}
+          {despesa.numeroParcela !== null && despesa.totalParcela !== null && (
+            <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Layers className="h-3.5 w-3.5 flex-shrink-0" />
+              <span className="whitespace-nowrap">{despesa.numeroParcela}/{despesa.totalParcela}</span>
+            </div>
+          )}
 
           {/* Status */}
           <Badge 
