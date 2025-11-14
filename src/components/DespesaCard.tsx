@@ -10,46 +10,46 @@ interface DespesaCardProps {
 
 export const DespesaCard = ({ despesa }: DespesaCardProps) => {
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex-1">
-            <h3 className="font-semibold text-foreground text-lg mb-1">
+    <Card className="hover:shadow-sm transition-shadow">
+      <CardContent className="p-3">
+        <div className="flex items-center gap-4">
+          {/* Descrição - flex 1 para ocupar espaço disponível */}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-medium text-foreground truncate">
               {despesa.descricao}
             </h3>
-            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" />
-                <span>{formatDate(despesa.data)}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Tag className="h-3.5 w-3.5" />
-                <span>{formatCompetencia(despesa.competencia)}</span>
-              </div>
-            </div>
           </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold text-foreground">
+
+          {/* Data */}
+          <div className="hidden sm:flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
+            <span className="whitespace-nowrap">{formatDate(despesa.data)}</span>
+          </div>
+
+          {/* Pagador */}
+          <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground">
+            <CreditCard className="h-3.5 w-3.5 flex-shrink-0" />
+            <span className="whitespace-nowrap">{despesa.pagador}</span>
+          </div>
+
+          {/* Competência */}
+          <div className="hidden lg:block text-sm text-muted-foreground">
+            <span className="whitespace-nowrap">{formatCompetencia(despesa.competencia)}</span>
+          </div>
+
+          {/* Status */}
+          <Badge 
+            variant={despesa.status === "PAGO" ? "default" : "secondary"}
+            className={`whitespace-nowrap ${despesa.status === "NAO_PAGO" ? "bg-warning text-warning-foreground" : ""}`}
+          >
+            {despesa.status === "NAO_PAGO" ? "Não Pago" : "Pago"}
+          </Badge>
+
+          {/* Valor - sempre visível */}
+          <div className="text-right min-w-[100px]">
+            <p className="text-lg font-bold text-foreground whitespace-nowrap">
               {formatCurrency(despesa.valor)}
             </p>
-          </div>
-        </div>
-        
-        <div className="flex justify-between items-center pt-2 border-t">
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <CreditCard className="h-3.5 w-3.5" />
-            <span>{despesa.pagador}</span>
-          </div>
-          <div className="flex gap-2">
-            <Badge variant="outline" className="text-xs">
-              {despesa.origem}
-            </Badge>
-            <Badge 
-              variant={despesa.status === "PAGO" ? "default" : "secondary"}
-              className={despesa.status === "NAO_PAGO" ? "bg-warning text-warning-foreground" : ""}
-            >
-              {despesa.status === "NAO_PAGO" ? "Não Pago" : "Pago"}
-            </Badge>
           </div>
         </div>
       </CardContent>
