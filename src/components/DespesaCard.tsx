@@ -13,32 +13,32 @@ export const DespesaCard = ({ despesa, onClick }: DespesaCardProps) => {
   return (
     <Card className="hover:shadow-sm transition-shadow cursor-pointer" onClick={onClick}>
       <CardContent className="p-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-nowrap items-center gap-3">
           {/* Descrição e Origem */}
-          <div className="flex-1 min-w-0 space-y-1">
-            <h3 className="font-medium text-foreground truncate">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-medium text-foreground truncate text-sm">
               {despesa.descricao}
             </h3>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
               <Tag className="h-3 w-3 flex-shrink-0" />
               <span className="truncate">{despesa.origem}</span>
             </div>
           </div>
 
           {/* Data */}
-          <div className="hidden sm:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[90px]">
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground w-[100px] flex-shrink-0">
             <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="whitespace-nowrap">{formatDate(despesa.data)}</span>
           </div>
 
           {/* Pagador */}
-          <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[100px]">
+          <div className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground w-[120px] flex-shrink-0">
             <CreditCard className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="whitespace-nowrap truncate">{despesa.pagador}</span>
           </div>
 
           {/* Parcela */}
-          <div className="hidden lg:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[70px]">
+          <div className="hidden lg:flex items-center gap-1.5 text-sm text-muted-foreground w-[70px] flex-shrink-0 justify-end">
             {despesa.numeroParcela !== null && despesa.totalParcela !== null && (
               <>
                 <Layers className="h-3.5 w-3.5 flex-shrink-0" />
@@ -50,14 +50,14 @@ export const DespesaCard = ({ despesa, onClick }: DespesaCardProps) => {
           {/* Status */}
           <Badge 
             variant={despesa.status === "PAGO" ? "default" : "secondary"}
-            className={`whitespace-nowrap min-w-[80px] justify-center ${despesa.status === "NAO_PAGO" ? "bg-warning text-warning-foreground" : ""}`}
+            className={`whitespace-nowrap w-[85px] flex-shrink-0 justify-center ${despesa.status === "NAO_PAGO" ? "bg-warning text-warning-foreground" : ""}`}
           >
             {despesa.status === "NAO_PAGO" ? "Não Pago" : "Pago"}
           </Badge>
 
           {/* Valor */}
-          <div className="text-right min-w-[100px]">
-            <p className="text-lg font-bold text-foreground whitespace-nowrap">
+          <div className="text-right w-[110px] flex-shrink-0">
+            <p className="text-base font-bold text-foreground whitespace-nowrap">
               {formatCurrency(despesa.valor)}
             </p>
           </div>
