@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Filter, CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -206,21 +205,20 @@ export const DespesaFilters = ({ filters, onFiltersChange }: DespesaFiltersProps
           {/* Ordenação */}
           <div className="space-y-2">
             <Label>Ordenar por</Label>
-            <RadioGroup
+            <Select
               value={filters.ordenacao}
               onValueChange={(value: "data" | "valor") => 
                 onFiltersChange({ ...filters, ordenacao: value })
               }
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="data" id="ord-data" />
-                <Label htmlFor="ord-data" className="font-normal cursor-pointer">Data (mais recente)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="valor" id="ord-valor" />
-                <Label htmlFor="ord-valor" className="font-normal cursor-pointer">Valor (maior)</Label>
-              </div>
-            </RadioGroup>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a ordenação" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="data">Data (mais recente)</SelectItem>
+                <SelectItem value="valor">Valor (maior)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>
