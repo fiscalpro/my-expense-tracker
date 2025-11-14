@@ -38,12 +38,14 @@ export const DespesaCard = ({ despesa, onClick }: DespesaCardProps) => {
           </div>
 
           {/* Parcela */}
-          {despesa.numeroParcela !== null && despesa.totalParcela !== null && (
-            <div className="hidden lg:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[60px]">
-              <Layers className="h-3.5 w-3.5 flex-shrink-0" />
-              <span className="whitespace-nowrap">{despesa.numeroParcela}/{despesa.totalParcela}</span>
-            </div>
-          )}
+          <div className="hidden lg:flex items-center gap-1.5 text-sm text-muted-foreground min-w-[70px]">
+            {despesa.numeroParcela !== null && despesa.totalParcela !== null && (
+              <>
+                <Layers className="h-3.5 w-3.5 flex-shrink-0" />
+                <span className="whitespace-nowrap">{despesa.numeroParcela}/{despesa.totalParcela}</span>
+              </>
+            )}
+          </div>
 
           {/* Status */}
           <Badge 
