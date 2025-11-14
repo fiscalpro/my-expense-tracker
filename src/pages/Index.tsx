@@ -6,10 +6,12 @@ import { DespesaPagination } from "@/components/DespesaPagination";
 import { NovaDespesaDialog } from "@/components/NovaDespesaDialog";
 import { VisualizarDespesaDialog } from "@/components/VisualizarDespesaDialog";
 import { DespesaResponse } from "@/types/despesa";
-import { Wallet, AlertCircle } from "lucide-react";
+import { Wallet, AlertCircle, TrendingUp } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
+import { formatCurrency } from "@/utils/formatters";
 
 const fetchDespesas = async (
   page: number, 
@@ -47,6 +49,31 @@ const fetchDespesas = async (
   return response.json();
 };
 
+const fetchCustoTotal = async (filters: DespesaFiltersData): Promise<{ custoTotal: number }> => {
+  const params = new URLSearchParams();
+
+  if (filters.nomeOrigem) params.append('nomeOrigem', filters.nomeOrigem);
+  if (filters.nomePagador) params.append('nomePagador', filters.nomePagador);
+  if (filters.statusDespesaEnum && filters.statusDespesaEnum !== 'all') {
+    params.append('statusDespesaEnum', filters.statusDespesaEnum);
+  }
+  if (filters.dataCompetencia) {
+    params.append('dataCompetencia', format(filters.dataCompetencia, 'yyyy-MM-dd'));
+  }
+  if (filters.dataCompetenciaInicio) {
+    params.append('dataCompetenciaInicio', format(filters.dataCompetenciaInicio, 'yyyy-MM-dd'));
+  }
+  if (filters.dataCompetenciaFim) {
+    params.append('dataCompetenciaFim', format(filters.dataCompetenciaFim, 'yyyy-MM-dd'));
+  }
+
+  const response = await fetch(`http://localhost:8080/relatorios/custo-total?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error('Falha ao carregar custo total');
+  }
+  return response.json();
+};
+
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 20;
@@ -64,6 +91,11 @@ const Index = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['despesas', currentPage, pageSize, filters],
     queryFn: () => fetchDespesas(currentPage, pageSize, filters),
+  });
+
+  const { data: custoTotalData, isLoading: isLoadingCustoTotal } = useQuery({
+    queryKey: ['custoTotal', filters],
+    queryFn: () => fetchCustoTotal(filters),
   });
 
   const handleFiltersChange = (newFilters: DespesaFiltersData) => {
@@ -92,6 +124,32 @@ const Index = () => {
 
         {/* Filters */}
         <DespesaFilters filters={filters} onFiltersChange={handleFiltersChange} />
+
+        {/* Custo Total Card */}
+        <Card className="mb-6 bg-primary/5 border-primary/20">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Custo Total</p>
+                  <p className="text-xs text-muted-foreground">da pesquisa atual</p>
+                </div>
+              </div>
+              <div className="text-right">
+                {isLoadingCustoTotal ? (
+                  <Skeleton className="h-8 w-32" />
+                ) : (
+                  <p className="text-2xl font-bold text-primary">
+                    {custoTotalData ? formatCurrency(custoTotalData.custoTotal) : 'R$ 0,00'}
+                  </p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Error State */}
         {error && (
