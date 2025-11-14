@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { PagadorSearch } from "@/components/PagadorSearch";
+import { OrigemSearch } from "@/components/OrigemSearch";
 
 interface NovaDespesaForm {
   descricao: string;
@@ -48,18 +50,29 @@ export function NovaDespesaDialog() {
       total: 1,
       numeroOriginal: 1,
     },
-    origemId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    pagadorId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    origemId: "",
+    pagadorId: "",
   });
 
   const mutation = useMutation({
     mutationFn: async (data: NovaDespesaForm) => {
+      // Só envia parcelaForm se algum campo foi realmente preenchido
+      const hasParcelaData = 
+        data.parcelaForm.tipoParcela !== "COMPRA" || 
+        data.parcelaForm.total !== 1 || 
+        data.parcelaForm.numeroOriginal !== 1;
+
+      const payload = {
+        ...data,
+        parcelaForm: hasParcelaData ? data.parcelaForm : undefined,
+      };
+
       const response = await fetch("http://localhost:8080/despesas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) {
         throw new Error("Erro ao criar despesa");
@@ -82,8 +95,8 @@ export function NovaDespesaDialog() {
           total: 1,
           numeroOriginal: 1,
         },
-        origemId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        pagadorId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        origemId: "",
+        pagadorId: "",
       });
     },
     onError: () => {
@@ -195,7 +208,6 @@ export function NovaDespesaDialog() {
                     },
                   })
                 }
-                required
               />
             </div>
 
@@ -215,10 +227,19 @@ export function NovaDespesaDialog() {
                     },
                   })
                 }
-                required
               />
             </div>
           </div>
+
+          <OrigemSearch
+            value={formData.origemId}
+            onSelect={(id) => setFormData({ ...formData, origemId: id })}
+          />
+
+          <PagadorSearch
+            value={formData.pagadorId}
+            onSelect={(id) => setFormData({ ...formData, pagadorId: id })}
+          />
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
