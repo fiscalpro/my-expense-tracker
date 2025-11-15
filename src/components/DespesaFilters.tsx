@@ -52,9 +52,9 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
 
   return (
     <Card className="mb-6">
-      <CardContent className="p-4">
+      <CardContent className={showFilters ? "p-4" : "p-0"}>
         <div 
-          className="flex items-center gap-2 mb-4 cursor-pointer hover:bg-accent/50 -m-4 p-4 rounded-t-lg transition-colors"
+          className="flex items-center gap-2 cursor-pointer hover:bg-accent/50 p-4 rounded-lg transition-colors"
           onClick={onToggleFilters}
         >
           <Filter className="h-4 w-4" />
@@ -77,7 +77,7 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
         </div>
 
         {showFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 pb-4">
           {/* Nome Origem */}
           <div className="space-y-2">
             <Label htmlFor="nomeOrigem">Origem</Label>

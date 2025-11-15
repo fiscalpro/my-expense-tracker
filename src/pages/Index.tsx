@@ -139,7 +139,7 @@ const Index = () => {
           onToggleFilters={() => setShowFilters(!showFilters)}
         />
         {showFilters && (
-          <div className="mb-6 flex justify-end">
+          <div className="mb-6 flex justify-start">
             <Button onClick={handleSearch} size="default">
               <Search className="h-4 w-4 mr-2" />
               Buscar
