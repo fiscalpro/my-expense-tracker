@@ -25,11 +25,9 @@ interface DespesaFiltersProps {
   onFiltersChange: (filters: DespesaFiltersData) => void;
   pageSize: number;
   onPageSizeChange: (size: number) => void;
-  showFilters: boolean;
-  onToggleFilters: () => void;
 }
 
-export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeChange, showFilters, onToggleFilters }: DespesaFiltersProps) => {
+export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeChange }: DespesaFiltersProps) => {
   const handleClearFilters = () => {
     onFiltersChange({
       nomeOrigem: "",
@@ -66,14 +64,6 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
               Limpar
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onToggleFilters}
-            className="ml-auto"
-          >
-            {showFilters ? 'Ocultar Filtros' : 'Exibir Filtros'}
-          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
