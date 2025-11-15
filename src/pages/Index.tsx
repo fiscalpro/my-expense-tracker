@@ -114,19 +114,16 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto py-8 px-4">
         {/* Header */}
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Wallet className="h-6 w-6 text-primary" />
-              </div>
-              <h1 className="text-3xl font-bold text-foreground">Controle de Gastos</h1>
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Wallet className="h-6 w-6 text-primary" />
             </div>
-            <p className="text-muted-foreground">
-              Gerencie suas despesas pessoais de forma simples e organizada
-            </p>
+            <h1 className="text-3xl font-bold text-foreground">Controle de Gastos</h1>
           </div>
-          <NovaDespesaDialog />
+          <p className="text-muted-foreground">
+            Gerencie suas despesas pessoais de forma simples e organizada
+          </p>
         </div>
 
         {/* Filters */}
@@ -149,6 +146,11 @@ const Index = () => {
             </Button>
           </div>
         )}
+
+        {/* Nova Despesa Button */}
+        <div className="mb-6">
+          <NovaDespesaDialog />
+        </div>
 
         {/* Custo Total Card */}
         <Card className="mb-6 bg-primary/5 border-primary/20">
