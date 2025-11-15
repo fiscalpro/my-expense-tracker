@@ -23,9 +23,13 @@ export interface DespesaFiltersData {
 interface DespesaFiltersProps {
   filters: DespesaFiltersData;
   onFiltersChange: (filters: DespesaFiltersData) => void;
+  pageSize: number;
+  onPageSizeChange: (size: number) => void;
+  showFilters: boolean;
+  onToggleFilters: () => void;
 }
 
-export const DespesaFilters = ({ filters, onFiltersChange }: DespesaFiltersProps) => {
+export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeChange, showFilters, onToggleFilters }: DespesaFiltersProps) => {
   const handleClearFilters = () => {
     onFiltersChange({
       nomeOrigem: "",
@@ -57,12 +61,19 @@ export const DespesaFilters = ({ filters, onFiltersChange }: DespesaFiltersProps
               variant="ghost"
               size="sm"
               onClick={handleClearFilters}
-              className="ml-auto"
             >
               <X className="h-4 w-4 mr-1" />
               Limpar
             </Button>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onToggleFilters}
+            className="ml-auto"
+          >
+            {showFilters ? 'Ocultar Filtros' : 'Exibir Filtros'}
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -240,6 +251,25 @@ export const DespesaFilters = ({ filters, onFiltersChange }: DespesaFiltersProps
               <SelectContent>
                 <SelectItem value="data">Data (mais recente)</SelectItem>
                 <SelectItem value="valor">Valor (maior)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Itens por página */}
+          <div className="space-y-2">
+            <Label>Itens por página</Label>
+            <Select 
+              value={pageSize.toString()} 
+              onValueChange={(value) => onPageSizeChange(Number(value))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+                <SelectItem value="20">20</SelectItem>
               </SelectContent>
             </Select>
           </div>

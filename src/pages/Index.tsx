@@ -11,7 +11,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { formatCurrency } from "@/utils/formatters";
 
@@ -127,47 +126,28 @@ const Index = () => {
               Gerencie suas despesas pessoais de forma simples e organizada
             </p>
           </div>
-          <div className="flex gap-2 items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Itens por página:</span>
-              <Select value={pageSize.toString()} onValueChange={(value) => {
-                setPageSize(Number(value));
-                setCurrentPage(0);
-              }}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="15">15</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button
-              variant="outline"
-              size="default"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              {showFilters ? 'Ocultar Filtros' : 'Exibir Filtros'}
-            </Button>
-            <NovaDespesaDialog />
-          </div>
+          <NovaDespesaDialog />
         </div>
 
         {/* Filters */}
+        <DespesaFilters 
+          filters={filters} 
+          onFiltersChange={handleFiltersChange}
+          pageSize={pageSize}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(0);
+          }}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+        />
         {showFilters && (
-          <>
-            <DespesaFilters filters={filters} onFiltersChange={handleFiltersChange} />
-            <div className="mb-6 flex justify-end">
-              <Button onClick={handleSearch} size="default">
-                <Search className="h-4 w-4 mr-2" />
-                Buscar
-              </Button>
-            </div>
-          </>
+          <div className="mb-6 flex justify-end">
+            <Button onClick={handleSearch} size="default">
+              <Search className="h-4 w-4 mr-2" />
+              Buscar
+            </Button>
+          </div>
         )}
 
         {/* Custo Total Card */}
