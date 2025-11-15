@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Filter, CalendarIcon, X } from "lucide-react";
+import { Filter, CalendarIcon, X, ChevronUp, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -25,9 +25,11 @@ interface DespesaFiltersProps {
   onFiltersChange: (filters: DespesaFiltersData) => void;
   pageSize: number;
   onPageSizeChange: (size: number) => void;
+  showFilters: boolean;
+  onToggleFilters: () => void;
 }
 
-export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeChange }: DespesaFiltersProps) => {
+export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeChange, showFilters, onToggleFilters }: DespesaFiltersProps) => {
   const handleClearFilters = () => {
     onFiltersChange({
       nomeOrigem: "",
@@ -54,11 +56,20 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
         <div className="flex items-center gap-2 mb-4">
           <Filter className="h-4 w-4" />
           <h3 className="font-medium">Filtros</h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleFilters}
+            className="p-1 h-auto"
+          >
+            {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </Button>
           {hasActiveFilters && (
             <Button
               variant="ghost"
               size="sm"
               onClick={handleClearFilters}
+              className="ml-auto"
             >
               <X className="h-4 w-4 mr-1" />
               Limpar

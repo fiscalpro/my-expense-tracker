@@ -127,39 +127,25 @@ const Index = () => {
         </div>
 
         {/* Filters */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Filtros</h2>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+        <DespesaFilters 
+          filters={filters} 
+          onFiltersChange={handleFiltersChange}
+          pageSize={pageSize}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(0);
+          }}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+        />
+        {showFilters && (
+          <div className="mb-6 flex justify-end">
+            <Button onClick={handleSearch} size="default">
+              <Search className="h-4 w-4 mr-2" />
+              Buscar
             </Button>
           </div>
-          
-          {showFilters && (
-            <>
-              <DespesaFilters 
-                filters={filters} 
-                onFiltersChange={handleFiltersChange}
-                pageSize={pageSize}
-                onPageSizeChange={(size) => {
-                  setPageSize(size);
-                  setCurrentPage(0);
-                }}
-              />
-              <div className="mb-6 flex justify-end">
-                <Button onClick={handleSearch} size="default">
-                  <Search className="h-4 w-4 mr-2" />
-                  Buscar
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
+        )}
 
         {/* Nova Despesa Button */}
         <div className="mb-6 flex justify-start">
