@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Origem } from "@/types/origem";
 
-type TipoOrigemEnum = "LAZER" | "RESTAURANTE" | "SUPERMERCADO" | "FARMACIA" | "ASSINATURA" | "COMBUSTIVEL" | "COMPRAS" | "SAUDE";
+type TipoOrigemEnum = "LAZER" | "RESTAURANTE" | "SUPERMERCADO" | "FARMACIA" | "ASSINATURA" | "COMBUSTIVEL" | "COMPRAS" | "SAUDE" | "JUROS" | "INFRA_TRABALHO" | "PET" | "PERFUMARIA_VESTUARIO";
 
 const tiposOrigem: { value: TipoOrigemEnum; label: string }[] = [
   { value: "LAZER", label: "Lazer" },
@@ -22,6 +22,10 @@ const tiposOrigem: { value: TipoOrigemEnum; label: string }[] = [
   { value: "COMBUSTIVEL", label: "Combustível" },
   { value: "COMPRAS", label: "Compras" },
   { value: "SAUDE", label: "Saúde" },
+  { value: "JUROS", label: "Juros" },
+  { value: "INFRA_TRABALHO", label: "Infraestrutura de Trabalho" },
+  { value: "PET", label: "Pet" },
+  { value: "PERFUMARIA_VESTUARIO", label: "Perfumaria e Vestuário" },
 ];
 
 const fetchOrigens = async (): Promise<Origem[]> => {

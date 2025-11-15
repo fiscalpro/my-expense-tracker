@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Plus, Building2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,23 @@ import { useToast } from "@/hooks/use-toast";
 import { PagadorSearch } from "@/components/PagadorSearch";
 import { OrigemSearch } from "@/components/OrigemSearch";
 
+type TipoOrigemEnum = "LAZER" | "RESTAURANTE" | "SUPERMERCADO" | "FARMACIA" | "ASSINATURA" | "COMBUSTIVEL" | "COMPRAS" | "SAUDE" | "JUROS" | "INFRA_TRABALHO" | "PET" | "PERFUMARIA_VESTUARIO";
+
+const tiposOrigem: { value: TipoOrigemEnum; label: string }[] = [
+  { value: "LAZER", label: "Lazer" },
+  { value: "RESTAURANTE", label: "Restaurante" },
+  { value: "SUPERMERCADO", label: "Supermercado" },
+  { value: "FARMACIA", label: "Farmácia" },
+  { value: "ASSINATURA", label: "Assinatura" },
+  { value: "COMBUSTIVEL", label: "Combustível" },
+  { value: "COMPRAS", label: "Compras" },
+  { value: "SAUDE", label: "Saúde" },
+  { value: "JUROS", label: "Juros" },
+  { value: "INFRA_TRABALHO", label: "Infraestrutura de Trabalho" },
+  { value: "PET", label: "Pet" },
+  { value: "PERFUMARIA_VESTUARIO", label: "Perfumaria e Vestuário" },
+];
+
 interface NovaDespesaForm {
   descricao: string;
   valor: number;
@@ -34,12 +51,17 @@ interface NovaDespesaForm {
     numeroOriginal: number;
   };
   origemId: string;
+  origemForm?: {
+    nome: string;
+    tipoOrigem: TipoOrigemEnum;
+  };
   pagadorId: string;
 }
 
 export function NovaDespesaDialog() {
   const [open, setOpen] = useState(false);
   const [incluirParcela, setIncluirParcela] = useState(false);
+  const [usarOrigemExistente, setUsarOrigemExistente] = useState(true);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -53,6 +75,10 @@ export function NovaDespesaDialog() {
       numeroOriginal: 1,
     },
     origemId: "",
+    origemForm: {
+      nome: "",
+      tipoOrigem: "LAZER",
+    },
     pagadorId: "",
   });
 
@@ -61,6 +87,8 @@ export function NovaDespesaDialog() {
       const payload = {
         ...data,
         parcelaForm: incluirParcela ? data.parcelaForm : undefined,
+        origemId: usarOrigemExistente ? data.origemId : undefined,
+        origemForm: !usarOrigemExistente ? data.origemForm : undefined,
       };
 
       const response = await fetch("http://localhost:8080/despesas", {
@@ -83,6 +111,7 @@ export function NovaDespesaDialog() {
       });
       setOpen(false);
       setIncluirParcela(false);
+      setUsarOrigemExistente(true);
       setFormData({
         descricao: "",
         valor: 0,
@@ -93,6 +122,10 @@ export function NovaDespesaDialog() {
           numeroOriginal: 1,
         },
         origemId: "",
+        origemForm: {
+          nome: "",
+          tipoOrigem: "LAZER",
+        },
         pagadorId: "",
       });
     },
@@ -243,10 +276,74 @@ export function NovaDespesaDialog() {
             </>
           )}
 
-          <OrigemSearch
-            value={formData.origemId}
-            onSelect={(id) => setFormData({ ...formData, origemId: id })}
-          />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label>Origem</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setUsarOrigemExistente(!usarOrigemExistente)}
+              >
+                <Building2 className="h-4 w-4 mr-2" />
+                {usarOrigemExistente ? 'Cadastrar Nova Origem' : 'Usar Origem Existente'}
+              </Button>
+            </div>
+
+            {usarOrigemExistente ? (
+              <OrigemSearch
+                value={formData.origemId}
+                onSelect={(id) => setFormData({ ...formData, origemId: id })}
+              />
+            ) : (
+              <div className="space-y-3 p-4 border rounded-lg bg-muted/50">
+                <div className="space-y-2">
+                  <Label htmlFor="origemNome">Nome da Origem</Label>
+                  <Input
+                    id="origemNome"
+                    value={formData.origemForm?.nome || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        origemForm: {
+                          ...formData.origemForm!,
+                          nome: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="Digite o nome da origem"
+                    required={!usarOrigemExistente}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="origemTipo">Tipo da Origem</Label>
+                  <Select
+                    value={formData.origemForm?.tipoOrigem}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        origemForm: {
+                          ...formData.origemForm!,
+                          tipoOrigem: value as TipoOrigemEnum,
+                        },
+                      })
+                    }
+                  >
+                    <SelectTrigger id="origemTipo">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tiposOrigem.map((tipo) => (
+                        <SelectItem key={tipo.value} value={tipo.value}>
+                          {tipo.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+          </div>
 
           <PagadorSearch
             value={formData.pagadorId}

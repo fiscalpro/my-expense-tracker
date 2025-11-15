@@ -6,8 +6,9 @@ import { DespesaPagination } from "@/components/DespesaPagination";
 import { NovaDespesaDialog } from "@/components/NovaDespesaDialog";
 import { VisualizarDespesaDialog } from "@/components/VisualizarDespesaDialog";
 import { DespesaResponse } from "@/types/despesa";
-import { Wallet, AlertCircle, TrendingUp } from "lucide-react";
+import { Wallet, AlertCircle, TrendingUp, Filter, Search } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
@@ -76,8 +77,9 @@ const fetchCustoTotal = async (filters: DespesaFiltersData): Promise<{ custoTota
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 20;
+  const [pageSize, setPageSize] = useState(20);
   const [selectedDespesaId, setSelectedDespesaId] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(true);
   const [filters, setFilters] = useState<DespesaFiltersData>({
     nomeOrigem: "",
     nomePagador: "",
@@ -87,20 +89,25 @@ const Index = () => {
     dataCompetenciaFim: undefined,
     ordenacao: "data",
   });
+  const [appliedFilters, setAppliedFilters] = useState<DespesaFiltersData>(filters);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['despesas', currentPage, pageSize, filters],
-    queryFn: () => fetchDespesas(currentPage, pageSize, filters),
+    queryKey: ['despesas', currentPage, pageSize, appliedFilters],
+    queryFn: () => fetchDespesas(currentPage, pageSize, appliedFilters),
   });
 
   const { data: custoTotalData, isLoading: isLoadingCustoTotal } = useQuery({
-    queryKey: ['custoTotal', filters],
-    queryFn: () => fetchCustoTotal(filters),
+    queryKey: ['custoTotal', appliedFilters],
+    queryFn: () => fetchCustoTotal(appliedFilters),
   });
 
   const handleFiltersChange = (newFilters: DespesaFiltersData) => {
     setFilters(newFilters);
-    setCurrentPage(0); // Reset to first page when filters change
+  };
+
+  const handleSearch = () => {
+    setAppliedFilters(filters);
+    setCurrentPage(0);
   };
 
   return (
@@ -119,11 +126,31 @@ const Index = () => {
               Gerencie suas despesas pessoais de forma simples e organizada
             </p>
           </div>
-          <NovaDespesaDialog />
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="default"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              {showFilters ? 'Ocultar Filtros' : 'Exibir Filtros'}
+            </Button>
+            <NovaDespesaDialog />
+          </div>
         </div>
 
         {/* Filters */}
-        <DespesaFilters filters={filters} onFiltersChange={handleFiltersChange} />
+        {showFilters && (
+          <>
+            <DespesaFilters filters={filters} onFiltersChange={handleFiltersChange} />
+            <div className="mb-6 flex justify-end">
+              <Button onClick={handleSearch} size="default">
+                <Search className="h-4 w-4 mr-2" />
+                Buscar
+              </Button>
+            </div>
+          </>
+        )}
 
         {/* Custo Total Card */}
         <Card className="mb-6 bg-primary/5 border-primary/20">

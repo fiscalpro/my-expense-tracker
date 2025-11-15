@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil } from "lucide-react";
+import { Pencil, Building2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,23 @@ import { Despesa } from "@/types/despesa";
 import { formatCurrency, formatDate, formatCompetencia } from "@/utils/formatters";
 import { Badge } from "@/components/ui/badge";
 
+type TipoOrigemEnum = "LAZER" | "RESTAURANTE" | "SUPERMERCADO" | "FARMACIA" | "ASSINATURA" | "COMBUSTIVEL" | "COMPRAS" | "SAUDE" | "JUROS" | "INFRA_TRABALHO" | "PET" | "PERFUMARIA_VESTUARIO";
+
+const tiposOrigem: { value: TipoOrigemEnum; label: string }[] = [
+  { value: "LAZER", label: "Lazer" },
+  { value: "RESTAURANTE", label: "Restaurante" },
+  { value: "SUPERMERCADO", label: "Supermercado" },
+  { value: "FARMACIA", label: "Farmácia" },
+  { value: "ASSINATURA", label: "Assinatura" },
+  { value: "COMBUSTIVEL", label: "Combustível" },
+  { value: "COMPRAS", label: "Compras" },
+  { value: "SAUDE", label: "Saúde" },
+  { value: "JUROS", label: "Juros" },
+  { value: "INFRA_TRABALHO", label: "Infraestrutura de Trabalho" },
+  { value: "PET", label: "Pet" },
+  { value: "PERFUMARIA_VESTUARIO", label: "Perfumaria e Vestuário" },
+];
+
 interface VisualizarDespesaDialogProps {
   despesaId: string;
   open: boolean;
@@ -43,6 +60,10 @@ interface EditForm {
   data: string;
   status: string;
   origemId: string;
+  origemForm?: {
+    nome: string;
+    tipoOrigem: TipoOrigemEnum;
+  };
   pagadorId: string;
 }
 
@@ -56,6 +77,7 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [usarOrigemExistente, setUsarOrigemExistente] = useState(true);
 
   const { data: despesa, isLoading } = useQuery({
     queryKey: ["despesa", despesaId],
@@ -69,6 +91,10 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
     data: "",
     status: "NAO_PAGO",
     origemId: "",
+    origemForm: {
+      nome: "",
+      tipoOrigem: "LAZER",
+    },
     pagadorId: "",
   });
 
@@ -87,12 +113,18 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
 
   const mutation = useMutation({
     mutationFn: async (data: EditForm) => {
+      const payload = {
+        ...data,
+        origemId: usarOrigemExistente ? data.origemId : undefined,
+        origemForm: !usarOrigemExistente ? data.origemForm : undefined,
+      };
+
       const response = await fetch(`http://localhost:8080/despesas/${despesaId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) {
         throw new Error("Erro ao atualizar despesa");
@@ -107,6 +139,7 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
         description: "As alterações foram salvas com sucesso.",
       });
       setIsEditing(false);
+      setUsarOrigemExistente(true);
     },
     onError: () => {
       toast({
@@ -130,10 +163,15 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
         data: despesa.data,
         status: despesa.status,
         origemId: despesa.origemId || "",
+        origemForm: {
+          nome: "",
+          tipoOrigem: "LAZER",
+        },
         pagadorId: despesa.pagadorId || "",
       });
     }
     setIsEditing(false);
+    setUsarOrigemExistente(true);
   };
 
   if (isLoading) {
@@ -228,11 +266,73 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <OrigemSearch
-                value={formData.origemId}
-                onSelect={(id) => setFormData({ ...formData, origemId: id })}
-              />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>Origem</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setUsarOrigemExistente(!usarOrigemExistente)}
+                >
+                  <Building2 className="h-4 w-4 mr-2" />
+                  {usarOrigemExistente ? 'Cadastrar Nova Origem' : 'Usar Origem Existente'}
+                </Button>
+              </div>
+
+              {usarOrigemExistente ? (
+                <OrigemSearch
+                  value={formData.origemId}
+                  onSelect={(id) => setFormData({ ...formData, origemId: id })}
+                />
+              ) : (
+                <div className="space-y-3 p-4 border rounded-lg bg-muted/50">
+                  <div className="space-y-2">
+                    <Label htmlFor="origemNome">Nome da Origem</Label>
+                    <Input
+                      id="origemNome"
+                      value={formData.origemForm?.nome || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          origemForm: {
+                            ...formData.origemForm!,
+                            nome: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="Digite o nome da origem"
+                      required={!usarOrigemExistente}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="origemTipo">Tipo da Origem</Label>
+                    <Select
+                      value={formData.origemForm?.tipoOrigem}
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          origemForm: {
+                            ...formData.origemForm!,
+                            tipoOrigem: value as TipoOrigemEnum,
+                          },
+                        })
+                      }
+                    >
+                      <SelectTrigger id="origemTipo">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {tiposOrigem.map((tipo) => (
+                          <SelectItem key={tipo.value} value={tipo.value}>
+                            {tipo.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
