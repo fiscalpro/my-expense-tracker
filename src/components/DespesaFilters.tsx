@@ -53,22 +53,21 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
   return (
     <Card className="mb-6">
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 mb-4">
+        <div 
+          className="flex items-center gap-2 mb-4 cursor-pointer hover:bg-accent/50 -m-4 p-4 rounded-t-lg transition-colors"
+          onClick={onToggleFilters}
+        >
           <Filter className="h-4 w-4" />
           <h3 className="font-medium">Filtros</h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleFilters}
-            className="p-1 h-auto"
-          >
-            {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
+          {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           {hasActiveFilters && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleClearFilters}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClearFilters();
+              }}
               className="ml-auto"
             >
               <X className="h-4 w-4 mr-1" />
@@ -77,7 +76,8 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {showFilters && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Nome Origem */}
           <div className="space-y-2">
             <Label htmlFor="nomeOrigem">Origem</Label>
@@ -274,7 +274,8 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
               </SelectContent>
             </Select>
           </div>
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
