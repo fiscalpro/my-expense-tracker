@@ -29,6 +29,9 @@ const fetchDespesas = async (
   if (filters.statusDespesaEnum && filters.statusDespesaEnum !== 'all') {
     params.append('statusDespesaEnum', filters.statusDespesaEnum);
   }
+  if (filters.tipoDespesa && filters.tipoDespesa !== 'all') {
+    params.append('tipoOrigem', filters.tipoDespesa);
+  }
   if (filters.dataCompetencia) {
     params.append('dataCompetencia', format(filters.dataCompetencia, 'yyyy-MM-dd'));
   }
@@ -58,6 +61,9 @@ const fetchCustoTotal = async (filters: DespesaFiltersData): Promise<{ custoTota
   if (filters.statusDespesaEnum && filters.statusDespesaEnum !== 'all') {
     params.append('statusDespesaEnum', filters.statusDespesaEnum);
   }
+  if (filters.tipoDespesa && filters.tipoDespesa !== 'all') {
+    params.append('tipoOrigem', filters.tipoDespesa);
+  }
   if (filters.dataCompetencia) {
     params.append('dataCompetencia', format(filters.dataCompetencia, 'yyyy-MM-dd'));
   }
@@ -84,6 +90,7 @@ const Index = () => {
     nomeOrigem: "",
     nomePagador: "",
     statusDespesaEnum: "",
+    tipoDespesa: "",
     dataCompetencia: undefined,
     dataCompetenciaInicio: undefined,
     dataCompetenciaFim: undefined,
