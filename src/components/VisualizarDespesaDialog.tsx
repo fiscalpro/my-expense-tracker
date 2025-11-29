@@ -34,7 +34,7 @@ import { Despesa } from "@/types/despesa";
 import { formatCurrency, formatDate, formatCompetencia } from "@/utils/formatters";
 import { Badge } from "@/components/ui/badge";
 
-type TipoOrigemEnum = "LAZER" | "RESTAURANTE" | "SUPERMERCADO" | "FARMACIA" | "ASSINATURA" | "COMBUSTIVEL" | "COMPRAS" | "SAUDE" | "JUROS" | "INFRA_TRABALHO" | "PET" | "PERFUMARIA_VESTUARIO";
+type TipoOrigemEnum = "LAZER" | "RESTAURANTE" | "SUPERMERCADO" | "FARMACIA" | "ASSINATURA" | "COMBUSTIVEL" | "COMPRAS" | "SAUDE" | "JUROS" | "INFRA_TRABALHO" | "PET" | "PERFUMARIA_VESTUARIO" | "EDUCACAO";
 
 const tiposOrigem: { value: TipoOrigemEnum; label: string }[] = [
   { value: "LAZER", label: "Lazer" },
@@ -49,6 +49,7 @@ const tiposOrigem: { value: TipoOrigemEnum; label: string }[] = [
   { value: "INFRA_TRABALHO", label: "Infraestrutura de Trabalho" },
   { value: "PET", label: "Pet" },
   { value: "PERFUMARIA_VESTUARIO", label: "Perfumaria e Vestuário" },
+  { value: "EDUCACAO", label: "Educação" },
 ];
 
 interface VisualizarDespesaDialogProps {
