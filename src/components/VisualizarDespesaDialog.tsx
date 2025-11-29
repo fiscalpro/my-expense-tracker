@@ -1,12 +1,22 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Building2 } from "lucide-react";
+import { Pencil, Building2, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -78,6 +88,7 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [usarOrigemExistente, setUsarOrigemExistente] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: despesa, isLoading } = useQuery({
     queryKey: ["despesa", despesaId],
@@ -150,6 +161,33 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`http://localhost:8080/despesas/${despesaId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Erro ao deletar despesa");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["despesas"] });
+      queryClient.invalidateQueries({ queryKey: ["custoTotal"] });
+      toast({
+        title: "Despesa deletada!",
+        description: "A despesa foi removida com sucesso.",
+      });
+      onOpenChange(false);
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível deletar a despesa.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     mutation.mutate(formData);
@@ -174,6 +212,11 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
     setUsarOrigemExistente(true);
   };
 
+  const handleDelete = () => {
+    deleteMutation.mutate();
+    setShowDeleteDialog(false);
+  };
+
   if (isLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -189,20 +232,51 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
   if (!despesa) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja deletar esta despesa? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Deletar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>Detalhes da Despesa</span>
             {!isEditing && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-              >
-                <Pencil className="h-4 w-4 mr-2" />
-                Editar
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Deletar
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editar
+                </Button>
+              </div>
             )}
           </DialogTitle>
         </DialogHeader>
@@ -411,5 +485,6 @@ export function VisualizarDespesaDialog({ despesaId, open, onOpenChange }: Visua
         )}
       </DialogContent>
     </Dialog>
+    </>
   );
 }

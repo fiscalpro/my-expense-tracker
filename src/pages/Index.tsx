@@ -81,6 +81,10 @@ const fetchCustoTotal = async (filters: DespesaFiltersData): Promise<{ custoTota
   return response.json();
 };
 
+// Define o primeiro dia do mês atual
+const now = new Date();
+const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -91,7 +95,7 @@ const Index = () => {
     nomePagador: "",
     statusDespesaEnum: "",
     tipoDespesa: "",
-    dataCompetencia: undefined,
+    dataCompetencia: firstDayOfMonth,
     dataCompetenciaInicio: undefined,
     dataCompetenciaFim: undefined,
     ordenacao: "data",
