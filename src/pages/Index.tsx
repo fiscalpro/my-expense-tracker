@@ -26,6 +26,7 @@ const fetchDespesas = async (
 
   if (filters.nomeOrigem) params.append('nomeOrigem', filters.nomeOrigem);
   if (filters.nomePagador) params.append('nomePagador', filters.nomePagador);
+  if (filters.descricao) params.append('descricao', filters.descricao);
   if (filters.statusDespesaEnum && filters.statusDespesaEnum !== 'all') {
     params.append('statusDespesaEnum', filters.statusDespesaEnum);
   }
@@ -58,6 +59,7 @@ const fetchCustoTotal = async (filters: DespesaFiltersData): Promise<{ custoTota
 
   if (filters.nomeOrigem) params.append('nomeOrigem', filters.nomeOrigem);
   if (filters.nomePagador) params.append('nomePagador', filters.nomePagador);
+  if (filters.descricao) params.append('descricao', filters.descricao);
   if (filters.statusDespesaEnum && filters.statusDespesaEnum !== 'all') {
     params.append('statusDespesaEnum', filters.statusDespesaEnum);
   }
@@ -93,6 +95,7 @@ const Index = () => {
   const [filters, setFilters] = useState<DespesaFiltersData>({
     nomeOrigem: "",
     nomePagador: "",
+    descricao: "",
     statusDespesaEnum: "",
     tipoDespesa: "",
     dataCompetencia: firstDayOfMonth,

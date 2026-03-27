@@ -3,12 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Filter, X, ChevronUp, ChevronDown } from "lucide-react";
+import { Filter, X, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 
 export interface DespesaFiltersData {
   nomeOrigem: string;
   nomePagador: string;
+  descricao: string;
   statusDespesaEnum: string;
   tipoDespesa: string;
   dataCompetencia: Date | undefined;
@@ -31,6 +32,7 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
     onFiltersChange({
       nomeOrigem: "",
       nomePagador: "",
+      descricao: "",
       statusDespesaEnum: "",
       tipoDespesa: "",
       dataCompetencia: undefined,
@@ -40,9 +42,16 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
     });
   };
 
+  const adjustCompetencia = (months: number) => {
+    const current = filters.dataCompetencia || new Date();
+    const newDate = new Date(current.getFullYear(), current.getMonth() + months, 1);
+    onFiltersChange({ ...filters, dataCompetencia: newDate });
+  };
+
   const hasActiveFilters = 
     filters.nomeOrigem || 
     filters.nomePagador || 
+    filters.descricao ||
     filters.statusDespesaEnum || 
     filters.tipoDespesa || 
     filters.dataCompetencia || 
@@ -99,6 +108,17 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
             />
           </div>
 
+          {/* Descrição */}
+          <div className="space-y-2">
+            <Label htmlFor="descricao">Descrição</Label>
+            <Input
+              id="descricao"
+              placeholder="Buscar por descrição..."
+              value={filters.descricao}
+              onChange={(e) => onFiltersChange({ ...filters, descricao: e.target.value })}
+            />
+          </div>
+
           {/* Status */}
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
@@ -148,16 +168,20 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
           {/* Data Competência */}
           <div className="space-y-2">
             <Label>Competência (Mês/Ano)</Label>
-            <div className="grid grid-cols-2 gap-2">
-              <Select
-                value={filters.dataCompetencia ? format(filters.dataCompetencia, "M") : ""}
-                onValueChange={(month) => {
-                  const year = filters.dataCompetencia ? filters.dataCompetencia.getFullYear() : new Date().getFullYear();
-                  const newDate = new Date(year, parseInt(month) - 1, 1);
-                  onFiltersChange({ ...filters, dataCompetencia: newDate });
-                }}
-              >
-                <SelectTrigger>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={() => adjustCompetencia(-1)}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <Select
+                  value={filters.dataCompetencia ? format(filters.dataCompetencia, "M") : ""}
+                  onValueChange={(month) => {
+                    const year = filters.dataCompetencia ? filters.dataCompetencia.getFullYear() : new Date().getFullYear();
+                    const newDate = new Date(year, parseInt(month) - 1, 1);
+                    onFiltersChange({ ...filters, dataCompetencia: newDate });
+                  }}
+                >
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="Mês" />
                 </SelectTrigger>
                 <SelectContent>
@@ -183,7 +207,7 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
                   onFiltersChange({ ...filters, dataCompetencia: newDate });
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="Ano" />
                 </SelectTrigger>
                 <SelectContent>
@@ -197,6 +221,10 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
                   })}
                 </SelectContent>
               </Select>
+            </div>
+              <Button size="sm" variant="outline" onClick={() => adjustCompetencia(1)}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 
@@ -212,7 +240,7 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
                   onFiltersChange({ ...filters, dataCompetenciaInicio: newDate });
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="Mês" />
                 </SelectTrigger>
                 <SelectContent>
@@ -238,7 +266,7 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
                   onFiltersChange({ ...filters, dataCompetenciaInicio: newDate });
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="Ano" />
                 </SelectTrigger>
                 <SelectContent>
@@ -267,7 +295,7 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
                   onFiltersChange({ ...filters, dataCompetenciaFim: newDate });
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="Mês" />
                 </SelectTrigger>
                 <SelectContent>
@@ -293,7 +321,7 @@ export const DespesaFilters = ({ filters, onFiltersChange, pageSize, onPageSizeC
                   onFiltersChange({ ...filters, dataCompetenciaFim: newDate });
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="Ano" />
                 </SelectTrigger>
                 <SelectContent>
