@@ -1,4 +1,4 @@
-import { Receipt, Tags, CreditCard, BarChart3 } from "lucide-react";
+import { Receipt, Tags, CreditCard, BarChart3, GitCompareArrows } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -16,6 +16,7 @@ const menuItems = [
   { title: "Origens", url: "/origens", icon: Tags },
   { title: "Pagadores", url: "/pagadores", icon: CreditCard },
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
+  { title: "Evolução Trimestral", url: "/evolucao", icon: GitCompareArrows },
 ];
 
 export function AppSidebar() {
