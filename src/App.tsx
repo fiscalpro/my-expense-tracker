@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import Origens from "./pages/Origens";
 import Pagadores from "./pages/Pagadores";
+import Regras from "./pages/Regras";
 import Relatorios from "./pages/Relatorios";
 import RelatoriosComparativos from "./pages/RelatoriosComparativos";
 import NotFound from "./pages/NotFound";
@@ -32,6 +33,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/origens" element={<Origens />} />
                 <Route path="/pagadores" element={<Pagadores />} />
+                <Route path="/regras" element={<Regras />} />
                 <Route path="/relatorios" element={<Relatorios />} />
                 <Route path="/evolucao" element={<RelatoriosComparativos />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
